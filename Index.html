@@ -3,94 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Pages Chat</title>
+    <title>Simple Message App</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-        }
-
-        #chat-container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
+            text-align: center;
+            padding-top: 50px;
         }
 
         #message-container {
-            height: 300px;
-            overflow-y: scroll;
-            border: 1px solid #ccc;
-            padding: 10px;
-        }
-
-        #input-container {
-            margin-top: 10px;
+            max-width: 600px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         input, button {
-            margin-right: 10px;
-            margin-bottom: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="chat-container">
-        <div id="message-container"></div>
-        <div id="input-container">
-            <input type="text" id="nickname" placeholder="Nickname">
-            <input type="text" id="message" placeholder="Type your message">
-            <button onclick="sendMessage()">Send</button>
-        </div>
+    <div id="message-container">
+        <h2>Simple Message App</h2>
+        <input type="text" id="user-message" placeholder="Type your message">
+        <button onclick="displayMessage()">Display Message</button>
+        <div id="displayed-message"></div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
     <script>
-        // Your Firebase configuration
-        var firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        var database = firebase.database();
-
-        function sendMessage() {
-            var nickname = document.getElementById('nickname').value;
-            var message = document.getElementById('message').value;
-
-            // Check if nickname and message are not empty
-            if (nickname && message) {
-                // Save message to Firebase
-                database.ref('messages').push({
-                    nickname: nickname,
-                    message: message,
-                });
-
-                document.getElementById('message').value = ''; // Clear the message input
-            } else {
-                alert('Please enter a nickname and message.');
-            }
+        function displayMessage() {
+            var userMessage = document.getElementById('user-message').value;
+            document.getElementById('displayed-message').innerHTML = "<strong>Your Message:</strong> " + userMessage;
         }
-
-        // Display incoming messages
-        database.ref('messages').on('child_added', function(snapshot) {
-            var message = snapshot.val();
-            var chatMessage = `<strong>${message.nickname}</strong>: ${message.message}<br>`;
-            document.getElementById('message-container').innerHTML += chatMessage;
-        });
     </script>
 </body>
 </html>
-
-
