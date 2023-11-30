@@ -44,8 +44,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/supabase-js"></script>
     <script>
-        const supabaseUrl = 'https://hbvtqkxybdpzjknznwkx.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhidnRxa3h5YmRwemprbnpud2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEzMDUwMDgsImV4cCI6MjAxNjg4MTAwOH0.zl11jtEvH_Ceg9D0JZkoq0fhmft0s5hirjBt_kNl3q0';
+        const supabaseUrl = 'YOUR_SUPABASE_URL';
+        const supabaseKey = 'YOUR_SUPABASE_KEY';
 
         const supabase = createClient(supabaseUrl, supabaseKey);
         const messageContainer = document.getElementById('message-container');
@@ -84,10 +84,14 @@
             const sender = 'Your Name'; // Set the sender's name
             const receiver = 'Recipient Name'; // Set the receiver's name
             if (messageText.trim() !== '') {
+                // Generate a unique ID for each message
+                const messageId = generateUniqueId();
+
                 supabase
                     .from('messages')
                     .upsert([
                         {
+                            id: messageId,
                             sender,
                             receiver,
                             message: messageText,
@@ -104,13 +108,18 @@
             }
         }
 
+        // Function to generate a unique ID (you can replace it with your own method)
+        function generateUniqueId() {
+            return new Date().toISOString(); // Using a timestamp as a simple example
+        }
+
         // Fetch messages on page load
         fetchMessages();
-        
+
         // Enable real-time updates
         const subscription = supabase
             .from('messages')
-            .on('INSERT', (payload) => {
+            .on('*', (payload) => {
                 fetchMessages();
             })
             .subscribe();
