@@ -16,7 +16,7 @@
             margin: auto;
             padding: 20px;
         }
-e
+
         #message-container {
             height: 300px;
             border: 1px solid #ccc;
@@ -29,6 +29,12 @@ e
             padding: 8px;
         }
 
+        #codeInput {
+            width: 70%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
         button {
             padding: 8px;
             cursor: pointer;
@@ -37,6 +43,12 @@ e
 </head>
 <body>
     <div id="app">
+        <div>
+            <label for="codeInput">Room Code:</label>
+            <input type="text" id="codeInput" placeholder="Enter 5-digit code...">
+            <button onclick="joinRoom()">Join Room</button>
+        </div>
+        
         <div id="message-container"></div>
         <input type="text" id="messageInput" placeholder="Type your message...">
         <button onclick="sendMessage()">Send</button>
@@ -45,11 +57,13 @@ e
     <script src="https://cdn.jsdelivr.net/npm/supabase-js"></script>
     <script>
         const supabaseUrl = 'https://hbvtqkxybdpzjknznwkx.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhidnRxa3h5YmRwemprbnpud2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEzMDUwMDgsImV4cCI6MjAxNjg4MTAwOH0.zl11jtEvH_Ceg9D0JZkoq0fhmft0s5hirjBt_kNl3q0';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhidnRxa3h5YmRwemprbnpud2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEzMDUwMDgsImV4cCI6MjAxNjg4MTAwOH0.zl11jtEvH_Ceg9D0JZkoq0fhmft0s5hirjBt_kNl3q0;
+        let roomCode = '';
 
         const supabase = createClient(supabaseUrl, supabaseKey);
         const messageContainer = document.getElementById('message-container');
         const messageInput = document.getElementById('messageInput');
+        const codeInput = document.getElementById('codeInput');
 
         function createClient(url, key) {
             return supabase.createClient(url, key);
@@ -59,6 +73,7 @@ e
             supabase
                 .from('messages')
                 .select('*')
+                .eq('roomCode', roomCode)
                 .order('id', { ascending: true })
                 .then(({ data, error }) => {
                     if (error) {
@@ -82,18 +97,13 @@ e
         function sendMessage() {
             const messageText = messageInput.value;
             const sender = 'Your Name'; // Set the sender's name
-            const receiver = 'Recipient Name'; // Set the receiver's name
             if (messageText.trim() !== '') {
-                // Generate a unique ID for each message
-                const messageId = generateUniqueId();
-
                 supabase
                     .from('messages')
                     .upsert([
                         {
-                            id: messageId,
                             sender,
-                            receiver,
+                            roomCode,
                             message: messageText,
                         },
                     ])
@@ -108,9 +118,14 @@ e
             }
         }
 
-        // Function to generate a unique ID (you can replace it with your own method)
-        function generateUniqueId() {
-            return new Date().toISOString(); // Using a timestamp as a simple example
+        function joinRoom() {
+            const enteredCode = codeInput.value.trim();
+            if (enteredCode.length === 5) {
+                roomCode = enteredCode;
+                fetchMessages();
+            } else {
+                alert('Please enter a valid 5-digit code.');
+            }
         }
 
         // Fetch messages on page load
