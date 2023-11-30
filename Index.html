@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iMessage Chat</title>
+    <title>GitHub Pages Chat</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,28 +40,57 @@
         <div id="message-container"></div>
         <div id="input-container">
             <input type="text" id="nickname" placeholder="Nickname">
-            <input type="text" id="code" placeholder="5-Digit Code">
             <input type="text" id="message" placeholder="Type your message">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
+        // Your Firebase configuration
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
         function sendMessage() {
             var nickname = document.getElementById('nickname').value;
-            var code = document.getElementById('code').value;
             var message = document.getElementById('message').value;
 
-            // Check if nickname, code, and message are not empty
-            if (nickname && code && message) {
-                var chatMessage = `<strong>${nickname}</strong> (${code}): ${message}<br>`;
-                document.getElementById('message-container').innerHTML += chatMessage;
+            // Check if nickname and message are not empty
+            if (nickname && message) {
+                // Save message to Firebase
+                database.ref('messages').push({
+                    nickname: nickname,
+                    message: message,
+                });
+
                 document.getElementById('message').value = ''; // Clear the message input
             } else {
-                alert('Please enter a nickname, code, and message.');
+                alert('Please enter a nickname and message.');
             }
         }
+
+        // Display incoming messages
+        database.ref('messages').on('child_added', function(snapshot) {
+            var message = snapshot.val();
+            var chatMessage = `<strong>${message.nickname}</strong>: ${message.message}<br>`;
+            document.getElementById('message-container').innerHTML += chatMessage;
+        });
     </script>
 </body>
 </html>
+
 
