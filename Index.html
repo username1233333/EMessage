@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMessage Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        #chat-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        #message-container {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        #input-container {
+            margin-top: 10px;
+        }
+
+        input, button {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="message-container"></div>
+        <div id="input-container">
+            <input type="text" id="nickname" placeholder="Nickname">
+            <input type="text" id="code" placeholder="5-Digit Code">
+            <input type="text" id="message" placeholder="Type your message">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var nickname = document.getElementById('nickname').value;
+            var code = document.getElementById('code').value;
+            var message = document.getElementById('message').value;
+
+            // Check if nickname, code, and message are not empty
+            if (nickname && code && message) {
+                var chatMessage = `<strong>${nickname}</strong> (${code}): ${message}<br>`;
+                document.getElementById('message-container').innerHTML += chatMessage;
+                document.getElementById('message').value = ''; // Clear the message input
+            } else {
+                alert('Please enter a nickname, code, and message.');
+            }
+        }
+    </script>
+</body>
+</html>
